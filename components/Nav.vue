@@ -23,8 +23,13 @@ export default Vue.extend({
     // 3D空間、3Dオブジェクトや光源などの置き場
     const scene = new THREE.Scene();
 
+    // 座標軸
+    const axes = new THREE.AxisHelper(500);
+    scene.add(axes);
+
     // どの視点から空間を撮影するか（画角、アスペクト比、描画開始距離、描画終了距離）
     const camera = new THREE.PerspectiveCamera(45, width / height, 1, 10000);
+    // 奥行き、上下角度、拡張（近く）
     camera.position.set(0, 0, +1000);
 
     // ジオメトリ：頂点情報や面情報を持っている
