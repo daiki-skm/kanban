@@ -1,6 +1,7 @@
 <template>
   <div>
-    <Nav />
+    <!-- <Nav /> -->
+    <Geo />
   </div>
 </template>
 
