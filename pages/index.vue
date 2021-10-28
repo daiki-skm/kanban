@@ -1,7 +1,7 @@
 <template>
   <div>
-    <!-- <Nav /> -->
-    <Geo />
+    <Nav />
+    <!-- <Geo /> -->
   </div>
 </template>
 
