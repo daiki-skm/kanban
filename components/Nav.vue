@@ -1,16 +1,7 @@
 <template>
   <section class="artwork">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <canvas class="artwork__canvas" ref="canvas"></canvas>
-
-      <!-- ライン描画用のSVG -->
-      <svg width="960" height="540" style="position: absolute; top: 0; left: 0">
-        <g stroke="white">
-          <line id="svgLine" x1="0" y1="0" x2="0" y2="0" stroke-width="3" />
-        </g>
-      </svg>
-
-      <!-- 座標表示用のdivタグ -->
-      <div id="hud" style="position: absolute; top: 0; left: 0; background: white"></div>
   </section>
 </template>
 
@@ -19,59 +10,66 @@ import Vue from 'vue'
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 import img from "@/static/earth.jpg"
-import demo from "@/static/demo"
-import gun from "@/static/portalgun.3ds"
 
 export default Vue.extend({
   name: 'Nav',
   mounted () {
     const width = 960;
     const height = 540;
-    let rot = 0;
 
-
-  const canvasElement = this.$refs.canvas
     const renderer = new THREE.WebGLRenderer({
-      canvas: canvasElement,
+      canvas: this.$refs.canvas,
+      antialias: true,
     });
-        renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.setSize(width, height);
 
     // 3D空間、3Dオブジェクトや光源などの置き場
     const scene = new THREE.Scene();
 
-        const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 10000);
-        // カメラの初期座標を設定
-        camera.position.set(0, 0, 5);
+    const camera = new THREE.PerspectiveCamera(45, 1.0);
+    // カメラの初期座標を設定
+    camera.position.set(0, 0, 1000);
 
-        const controls = new OrbitControls(camera, canvasElement);
-
-        // 平行光源を作成
-        const directionalLight = new THREE.DirectionalLight(0xffffff);
-        directionalLight.position.set(1, 1, 1);
-        scene.add(directionalLight);
-        // 環境光を追加
-        const ambientLight = new THREE.AmbientLight(0xffffff);
-        scene.add(ambientLight);
-
-                // 3DS形式のモデルデータを読み込む
-        const loader = new THREE.TDSLoader();
-        // テクスチャーのパスを指定
-        loader.setResourcePath(demo);
-        // 3dsファイルのパスを指定
-        loader.load(gun, (object) => {
-          // 読み込み後に3D空間に追加
-          scene.add(object);
-        });
+    // 球体を作成
+    const geometry = new THREE.SphereGeometry(300, 30, 30);
+    // マテリアルを作成
+    const material = new THREE.MeshBasicMaterial({ wireframe: true });
+    // メッシュを作成
+    const mesh = new THREE.Mesh(geometry, material);
+    // 3D空間にメッシュを追加
+    scene.add(mesh);
 
     tick()
 
-    const tmp = this.$refs.hud
-
     function tick() {
-renderer.render(scene, camera);
-          requestAnimationFrame(tick);
+      renderer.render(scene, camera);
+      requestAnimationFrame(tick);
+    }
+
+    // 初期化のために実行
+    onResize();
+    // リサイズイベント発生時に実行
+    window.addEventListener('resize', onResize);
+
+    function onResize() {
+      // サイズを取得
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+
+      // レンダラーのサイズを調整する
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(width, height);
+
+      // カメラのアスペクト比を正す
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
     }
   },
 })
 </script>
+
+<style lang="scss">
+  body {
+    margin: 0;
+    overflow: hidden;
+  }
+</style>
