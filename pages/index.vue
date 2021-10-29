@@ -1,7 +1,8 @@
 <template>
   <div>
-    <Nav />
-    <!-- <Geo /> -->
+    <Raycast />
+    <!-- <Nav />
+    <Geo /> -->
   </div>
 </template>
 
