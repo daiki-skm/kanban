@@ -108,10 +108,3 @@ export default Vue.extend({
   },
 })
 </script>
-
-<style lang="scss">
-  body {
-    margin: 0;
-    overflow: hidden;
-  }
-</style>
