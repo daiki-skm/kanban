@@ -2,8 +2,8 @@
   <div>
     <Point />
     <!-- <Raycast /> -->
-    <!-- <Nav />
-    <Geo /> -->
+    <!-- <Nav /> -->
+    <!-- <Geo /> -->
   </div>
 </template>
 
