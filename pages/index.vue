@@ -1,7 +1,7 @@
 <template>
   <div>
-    <Point />
-    <!-- <Raycast /> -->
+    <!-- <Point /> -->
+    <Raycast />
     <!-- <Nav /> -->
     <!-- <Geo /> -->
   </div>
