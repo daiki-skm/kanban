@@ -1,9 +1,9 @@
 <template>
   <div>
     <!-- <Point /> -->
-    <Raycast />
+    <!-- <Raycast /> -->
     <!-- <Nav /> -->
-    <!-- <Geo /> -->
+    <Geo />
   </div>
 </template>
 
