@@ -1,10 +1,12 @@
 <template>
   <div>
+    <BaseBackground />
+    <!-- <Plane /> -->
     <!-- <Point /> -->
     <!-- <Raycast /> -->
     <!-- <Nav /> -->
-    <Geo />
-     <div class="page">
+    <!-- <Geo /> -->
+     <!-- <div class="page">
       <label>
         <span>
           お名前:
@@ -29,7 +31,7 @@
       >
         Submit
       </button>
-    </div>
+    </div> -->
   </div>
 </template>
 
