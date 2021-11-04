@@ -1,7 +1,6 @@
 <template>
-    <div class="container w-screen h-screen bg-white">
-        <canvas class="artwork__canvas" ref="canvas"></canvas>
-        <div class="container h-1/6 mt-10 px-10 font-mono">
+    <div class="w-screen h-screen bg-white">
+        <div class="h-1/6 mt-10 px-10 font-mono">
             <p class="text-6xl text-gray-800 text-left mb-10">
                 kanban
             </p>
@@ -43,7 +42,7 @@
             </p>
             <canvas class="artwork__canvas" ref="canvas"></canvas>
         </div>
-        <div class="container mx-auto w-1 h-1 w-3/4 h-3/4 rounded-3xl shadow-2xl grid gap-0 grid-cols-2">
+        <div class="mx-auto w-1 h-1 w-3/4 h-3/4 rounded-3xl shadow-2xl grid gap-0 grid-cols-2">
             <div class="bg-red-100 rounded-tl-3xl">MUST</div>
             <div class="bg-yellow-100 rounded-tr-3xl">価値</div>
             <div class="bg-green-100 rounded-bl-3xl">錯覚</div>
@@ -55,7 +54,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import database from '@/plugin/firebase'
-import { collection, addDoc, doc, setDoc, deleteDoc, onSnapshot, getDocs } from "firebase/firestore"
+import { collection, doc, setDoc, deleteDoc, getDocs } from "firebase/firestore"
 import * as THREE from "three";
 import { DragControls } from "three/examples/jsm/controls/DragControls"
 
@@ -87,7 +86,7 @@ export default Vue.extend({
             },
             position: {
                 x: -20,
-                y: 0,
+                y: 10,
                 z: -40
             }
         } as DataType
@@ -122,6 +121,14 @@ export default Vue.extend({
             window.addEventListener('resize', _this.onResize(renderer, camera));
         });
     },
+    watch: {
+        '$window.width'() {
+            console.log(`width: ${(this as any).$window.width}`)
+        },
+        '$window.height'() {
+            console.log(`height: ${(this as any).$window.height}`)
+        },
+    },
     methods: {
         createRenderer () {
             const renderer = new THREE.WebGLRenderer({
@@ -136,8 +143,8 @@ export default Vue.extend({
         },
         createCamera () {
             const camera = new THREE.PerspectiveCamera(45, this.width / this.height);
-            camera.position.set(0, -20, 100);
-            // camera.lookAt(new THREE.Vector3(0, 0, 0));
+            camera.position.set(0, 0, 150);
+            camera.lookAt(new THREE.Vector3(0, 0, 0));
 
             return camera
         },
@@ -181,6 +188,7 @@ export default Vue.extend({
             // サイズを取得
             const width = window.innerWidth;
             const height = window.innerHeight;
+            // console.log('--------------------', width, height)
 
             // レンダラーのサイズを調整する
             renderer.setPixelRatio(window.devicePixelRatio);
