@@ -64,6 +64,8 @@ interface DataType {
     num: number
     width: number
     height: number
+    scale: Object
+    position: Object
 }
 
 let dict_memo = {}
@@ -77,71 +79,34 @@ export default Vue.extend({
             memo: "",
             num: 1,
             width: 960,
-            height: 540
+            height: 540,
+            scale: {
+                x: 20,
+                y: 20,
+                z: 20,
+            },
+            position: {
+                x: -20,
+                y: 0,
+                z: -40
+            }
         } as DataType
     },
     async mounted () {
+        const _this = this
         const querySnapshot = await getDocs(collection(database, "memo"));
         querySnapshot.forEach((doc) => {
-            const renderer = this.createRenderer()
-            const camera = this.createCamera()
-
-            const createSprite = (texture:any, scale:any, position:any, num:string) => {
-                const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
-                const sprite = new THREE.Sprite(spriteMaterial);
-                sprite.scale.set(scale.x, scale.y, scale.z);
-                sprite.position.set(position.x, position.y, position.z);
-
-                scene.add(sprite);
-
-                // @ts-ignore
-                dict_memo[num] = sprite
-
-                const controls = new DragControls( [sprite], camera, renderer.domElement );
-            };
-
-            const createCanvasForTexture = (canvasWidth:any, canvasHeight:any, text:any, fontSize:any) => {
-                // 貼り付けるcanvasを作成。
-                const canvasForText = document.createElement('canvas');
-                const ctx = canvasForText.getContext('2d');
-                if (ctx) {
-                    ctx.canvas.width = canvasWidth; // 小さいと文字がぼやける
-                    ctx.canvas.height = canvasHeight; // 小さいと文字がぼやける 
-                    // 透過率50%の青背景を描く
-                    ctx.fillStyle = 'rgba(0, 0, 255, 0.5)';
-                    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-                    //
-                    ctx.fillStyle = 'black';
-                    ctx.font = `${fontSize}px serif`;
-                    ctx.fillText(
-                        text,
-                        // x方向の余白/2をx方向開始時の始点とすることで、横方向の中央揃えをしている。
-                        (canvasWidth - ctx.measureText(text).width) / 2,
-                        // y方向のcanvasの中央に文字の高さの半分を加えることで、縦方向の中央揃えをしている。
-                        canvasHeight / 2 + ctx.measureText(text).actualBoundingBoxAscent / 2
-                    );
-                }
-                return canvasForText;
-            };
+            const renderer = _this.createRenderer()
+            const camera = _this.createCamera()
 
             const memo = doc.id + '. ' + doc.data().memo
+            const createCanvasForTexture = _this.createCanvasForTexture(500, 500, memo, 100)
 
             const canvasTexture = new THREE.CanvasTexture(
-                createCanvasForTexture(500, 500, memo, 100)
+                createCanvasForTexture
             );
 
-            const scaleMaster = 20;
-
-            createSprite(
-                canvasTexture,
-                {
-                    x: scaleMaster,
-                    y: scaleMaster,
-                    z: scaleMaster,
-                },
-                { x: -20, y: 0, z: -40 },
-                doc.id
-            );
+            _this.createSprite(canvasTexture, _this.scale, _this.position, doc.id, camera, renderer)
 
             tick()
 
@@ -151,23 +116,10 @@ export default Vue.extend({
             }
 
             // 初期化のために実行
-            onResize();
+            _this.onResize(renderer, camera);
             // リサイズイベント発生時に実行
-            window.addEventListener('resize', onResize);
-
-            function onResize() {
-                // サイズを取得
-                const width = window.innerWidth;
-                const height = window.innerHeight;
-
-                // レンダラーのサイズを調整する
-                renderer.setPixelRatio(window.devicePixelRatio);
-                renderer.setSize(width, height);
-
-                // カメラのアスペクト比を正す
-                camera.aspect = width / height;
-                camera.updateProjectionMatrix();
-            }
+            // @ts-ignore
+            window.addEventListener('resize', _this.onResize(renderer, camera));
         });
     },
     methods: {
@@ -254,14 +206,14 @@ export default Vue.extend({
             await deleteDoc(doc(database, "memo", String(this.num)));
         },
         async addMemo () {
+            // @ts-ignore
+            if (dict_memo[String(this.num)]) {
+                await this.deleteMemo()
+            }
+
             await setDoc(doc(database, "memo", String(this.num)), {
                 memo: this.memo,
             });
-
-            // @ts-ignore
-            if (dict_memo[String(this.num)]) {
-                this.deleteMemo()
-            }
 
             const renderer = this.createRenderer()
             const camera = this.createCamera()
@@ -273,19 +225,7 @@ export default Vue.extend({
                 createCanvasForTexture
             );
 
-            const scaleMaster = 20;
-            const scale = {
-                x: scaleMaster,
-                y: scaleMaster,
-                z: scaleMaster,
-            }
-            const position = {
-                x: -20,
-                y: 0,
-                z: -40
-            }
-
-            this.createSprite(canvasTexture, scale, position, String(this.num), camera, renderer)
+            this.createSprite(canvasTexture, this.scale, this.position, String(this.num), camera, renderer)
 
             tick()
 
@@ -300,7 +240,6 @@ export default Vue.extend({
             // @ts-ignore
             window.addEventListener('resize', this.onResize(renderer, camera));
 
-            console.log('-----', dict_memo)
             this.num++
         },
     },
