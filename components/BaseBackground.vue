@@ -23,7 +23,17 @@
                 </div>
             </p>
             <p class="text-right mr-20">
-                <div class="mt-1 relative rounded-md shadow-sm">
+                <div class="mt-10 relative rounded-md shadow-sm">
+                    <input
+                        type="text"
+                        v-model="four"
+                        class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 bg-red-100 rounded-md"
+                        placeholder="four"
+                    >
+                </div>
+            </p>
+            <p class="text-right mr-20">
+                <div class="mt-10 relative rounded-md shadow-sm">
                     <input
                         type="number"
                         v-model="num"
@@ -36,6 +46,18 @@
                             class="rounded-full py-3 px-6 bg-red-100"
                         >
                             削除
+                        </span>
+                    </div>
+                </div>
+            </p>
+            <p class="text-right mr-20">
+                <div class="mt-10 relative rounded-md shadow-sm">
+                    <div class="absolute inset-y-0 right-0 flex items-center">
+                        <span
+                            @click="resetMemo"
+                            class="rounded-full py-3 px-6 bg-red-100"
+                        >
+                            再配置
                         </span>
                     </div>
                 </div>
@@ -61,10 +83,12 @@ import { DragControls } from "three/examples/jsm/controls/DragControls"
 interface DataType {
     memo: string
     num: number
+    four: string
     width: number
     height: number
     scale: Object
     position: Object
+    demo: Object
 }
 
 let dict_memo = {}
@@ -77,6 +101,7 @@ export default Vue.extend({
         return {
             memo: "",
             num: 1,
+            four: "",
             width: 960,
             height: 540,
             scale: {
@@ -85,9 +110,31 @@ export default Vue.extend({
                 z: 20,
             },
             position: {
-                x: -20,
-                y: 10,
+                x: 10,
+                y: 0,
                 z: -40
+            },
+            demo: {
+                "must": {
+                    x: -50,
+                    y: 60,
+                    z: -40
+                },
+                "value": {
+                    x: 10,
+                    y: 60,
+                    z: -40
+                },
+                "sakkaku": {
+                    x: -50,
+                    y: 0,
+                    z: -40
+                },
+                "wrong": {
+                    x: 10,
+                    y: 0,
+                    z: -40
+                }
             }
         } as DataType
     },
@@ -105,7 +152,10 @@ export default Vue.extend({
                 createCanvasForTexture
             );
 
-            _this.createSprite(canvasTexture, _this.scale, _this.position, doc.id, camera, renderer)
+            const four = doc.data().four
+            // @ts-ignore
+            const position = _this.demo[four]
+            _this.createSprite(canvasTexture, _this.scale, position, doc.id, camera, renderer)
 
             tick()
 
@@ -130,6 +180,10 @@ export default Vue.extend({
         },
     },
     methods: {
+        resetMemo () {
+            // @ts-ignore
+            console.log(this.demo["must"])
+        },
         createRenderer () {
             const renderer = new THREE.WebGLRenderer({
                 // @ts-ignore
@@ -188,7 +242,6 @@ export default Vue.extend({
             // サイズを取得
             const width = window.innerWidth;
             const height = window.innerHeight;
-            // console.log('--------------------', width, height)
 
             // レンダラーのサイズを調整する
             renderer.setPixelRatio(window.devicePixelRatio);
@@ -220,7 +273,8 @@ export default Vue.extend({
             }
 
             await setDoc(doc(database, "memo", String(this.num)), {
-                memo: this.memo,
+                four: this.four,
+                memo: this.memo
             });
 
             const renderer = this.createRenderer()
@@ -233,7 +287,9 @@ export default Vue.extend({
                 createCanvasForTexture
             );
 
-            this.createSprite(canvasTexture, this.scale, this.position, String(this.num), camera, renderer)
+            // @ts-ignore
+            const position = this.demo[this.four]
+            this.createSprite(canvasTexture, this.scale, position, String(this.num), camera, renderer)
 
             tick()
 
