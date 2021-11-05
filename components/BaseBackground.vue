@@ -1,6 +1,6 @@
 <template>
     <div class="w-screen h-screen bg-white">
-        <div class="h-1/6 mt-10 px-10 font-mono">
+        <div class="h-1/6 mt-10 mb-24 px-10 font-mono">
             <p class="text-6xl text-gray-800 text-left mb-10">
                 kanban
             </p>
@@ -50,21 +50,9 @@
                     </div>
                 </div>
             </p>
-            <p class="text-right mr-20">
-                <div class="mt-10 relative rounded-md shadow-sm">
-                    <div class="absolute inset-y-0 right-0 flex items-center">
-                        <span
-                            @click="resetMemo"
-                            class="rounded-full py-3 px-6 bg-red-100"
-                        >
-                            再配置
-                        </span>
-                    </div>
-                </div>
-            </p>
-            <canvas class="artwork__canvas" ref="canvas"></canvas>
         </div>
-        <div class="mx-auto w-1 h-1 w-3/4 h-3/4 rounded-3xl shadow-2xl grid gap-0 grid-cols-2">
+        <canvas class="artwork__canvas" ref="canvas"></canvas>
+        <div class="kanban mx-auto w-1 h-1 w-3/4 h-3/4 rounded-3xl shadow-2xl grid gap-0 grid-cols-2">
             <div class="bg-red-100 rounded-tl-3xl">MUST</div>
             <div class="bg-yellow-100 rounded-tr-3xl">価値</div>
             <div class="bg-green-100 rounded-bl-3xl">錯覚</div>
@@ -160,6 +148,10 @@ export default Vue.extend({
             tick()
 
             function tick() {
+                const canvas = renderer.domElement;
+                camera.aspect = canvas.clientWidth / canvas.clientHeight;
+                camera.updateProjectionMatrix();
+
                 renderer.render(scene, camera);
                 requestAnimationFrame(tick);
             }
@@ -180,10 +172,6 @@ export default Vue.extend({
         },
     },
     methods: {
-        resetMemo () {
-            // @ts-ignore
-            console.log(this.demo["must"])
-        },
         createRenderer () {
             const renderer = new THREE.WebGLRenderer({
                 // @ts-ignore
@@ -294,6 +282,10 @@ export default Vue.extend({
             tick()
 
             function tick() {
+                const canvas = renderer.domElement;
+                camera.aspect = canvas.clientWidth / canvas.clientHeight;
+                camera.updateProjectionMatrix();
+
                 renderer.render(scene, camera);
                 requestAnimationFrame(tick);
             }
@@ -311,5 +303,11 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-
+.artwork__canvas {
+    position: absolute;
+    z-index: 1;
+    width: 80% !important;
+    height: 80% !important;
+    margin-left: 12%;
+}
 </style>
