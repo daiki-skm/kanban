@@ -50,6 +50,14 @@
                     </div>
                 </div>
             </p>
+            <div class="absolute inset-y-0 right-0 flex items-center">
+                <span
+                    @click="auth"
+                    class="rounded-full py-3 px-6 bg-red-100"
+                >
+                    login
+                </span>
+            </div>
         </div>
         <canvas class="artwork__canvas" ref="canvas"></canvas>
         <div class="kanban mx-auto w-1 h-1 w-3/4 h-3/4 rounded-3xl shadow-2xl grid gap-0 grid-cols-2">
@@ -172,6 +180,10 @@ export default Vue.extend({
         },
     },
     methods: {
+        auth () {
+            console.log('login')
+            this.$store.dispatch('login')
+        },
         createRenderer () {
             const renderer = new THREE.WebGLRenderer({
                 // @ts-ignore
