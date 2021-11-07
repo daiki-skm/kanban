@@ -4,7 +4,6 @@
       <p class="text-6xl text-gray-800 text-left mb-10">
         kanban
       </p>
-      <p class="title is-1 is-spaced">user: {{ $store.getters.getUserName }}</p>
       <p class="text-right mr-20">
         <div class="mt-1 relative rounded-md shadow-sm">
           <input
@@ -27,9 +26,9 @@
         <div class="mt-10 relative rounded-md shadow-sm">
           <input
             type="text"
-            v-model="four"
+            v-model="which"
             class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 bg-red-100 rounded-md"
-            placeholder="four"
+            placeholder="which"
           >
         </div>
       </p>
@@ -84,12 +83,11 @@ import { DragControls } from "three/examples/jsm/controls/DragControls"
 interface DataType {
   memo: string
   num: number
-  four: string
+  which: string
   width: number
   height: number
   scale: Object
-  position: Object
-  demo: Object
+  position_obj: Object
 }
 
 let dict_memo = {}
@@ -102,7 +100,7 @@ export default Vue.extend({
     return {
       memo: "",
       num: 1,
-      four: "",
+      which: "",
       width: 960,
       height: 540,
       scale: {
@@ -110,12 +108,7 @@ export default Vue.extend({
         y: 20,
         z: 20,
       },
-      position: {
-        x: 10,
-        y: 0,
-        z: -40
-      },
-      demo: {
+      position_obj: {
         "must": {
           x: -50,
           y: 60,
@@ -126,12 +119,12 @@ export default Vue.extend({
           y: 60,
           z: -40
         },
-        "sakkaku": {
+        "illusion": {
           x: -50,
           y: 0,
           z: -40
         },
-        "wrong": {
+        "unnecessary": {
           x: 10,
           y: 0,
           z: -40
@@ -147,19 +140,17 @@ export default Vue.extend({
       const renderer = _this.createRenderer()
       const camera = _this.createCamera()
 
-      console.log('---------', doc)
-
-      const memo = doc.id + '. ' + doc.data().memo
+      const memo = doc.data().num + '. ' + doc.data().memo
       const createCanvasForTexture = _this.createCanvasForTexture(500, 500, memo, 100)
 
       const canvasTexture = new THREE.CanvasTexture(
         createCanvasForTexture
       );
 
-      const four = doc.data().four
+      const which = doc.data().which
       // @ts-ignore
-      const position = _this.demo[four]
-      _this.createSprite(canvasTexture, _this.scale, position, doc.id, camera, renderer)
+      const position = _this.position_obj[which]
+      _this.createSprite(canvasTexture, _this.scale, position, doc.data().num, camera, renderer)
 
       tick()
 
@@ -179,151 +170,149 @@ export default Vue.extend({
       window.addEventListener('resize', _this.onResize(renderer, camera));
     });
   },
-    watch: {
-      '$window.width'() {
-        console.log(`width: ${(this as any).$window.width}`)
-      },
-      '$window.height'() {
-        console.log(`height: ${(this as any).$window.height}`)
-      },
+  watch: {
+    '$window.width'() {
+      console.log(`width: ${(this as any).$window.width}`)
     },
-    methods: {
-      logout () {
-        this.$store.dispatch('logout')
-      },
-      createRenderer () {
-        const renderer = new THREE.WebGLRenderer({
-          // @ts-ignore
-          canvas: this.$refs.canvas,
-          alpha: true,
-        });
-        renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.setSize(this.width, this.height);
-
-        return renderer
-      },
-      createCamera () {
-        const camera = new THREE.PerspectiveCamera(45, this.width / this.height);
-        camera.position.set(0, 0, 150);
-        camera.lookAt(new THREE.Vector3(0, 0, 0));
-
-        return camera
-      },
-      createSprite (texture:any, scale:any, position:any, num:string, camera:any, renderer:any) {
-        const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
-        const sprite = new THREE.Sprite(spriteMaterial);
-        sprite.scale.set(scale.x, scale.y, scale.z);
-        sprite.position.set(position.x, position.y, position.z);
-
-        scene.add(sprite);
-
+    '$window.height'() {
+      console.log(`height: ${(this as any).$window.height}`)
+    },
+  },
+  methods: {
+    logout () {
+      this.$store.dispatch('logout')
+    },
+    createRenderer () {
+      const renderer = new THREE.WebGLRenderer({
         // @ts-ignore
-        dict_memo[num] = sprite
+        canvas: this.$refs.canvas,
+        alpha: true,
+      });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(this.width, this.height);
 
-        const controls = new DragControls( [sprite], camera, renderer.domElement );
-      },
-      createCanvasForTexture (canvasWidth:any, canvasHeight:any, text:any, fontSize:any) {
-        // 貼り付けるcanvasを作成。
-        const canvasForText = document.createElement('canvas');
-        const ctx = canvasForText.getContext('2d');
-        if (ctx) {
-          ctx.canvas.width = canvasWidth; // 小さいと文字がぼやける
-          ctx.canvas.height = canvasHeight; // 小さいと文字がぼやける 
-          // 透過率50%の青背景を描く
-          ctx.fillStyle = 'rgba(0, 0, 255, 0.5)';
-          ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-          //
-          ctx.fillStyle = 'black';
-          ctx.font = `${fontSize}px serif`;
-          ctx.fillText(
-            text,
-            // x方向の余白/2をx方向開始時の始点とすることで、横方向の中央揃えをしている。
-            (canvasWidth - ctx.measureText(text).width) / 2,
-            // y方向のcanvasの中央に文字の高さの半分を加えることで、縦方向の中央揃えをしている。
-            canvasHeight / 2 + ctx.measureText(text).actualBoundingBoxAscent / 2
-          );
-        }
-        return canvasForText;
-      },
-      onResize (renderer:any, camera:any) {
-        // サイズを取得
-        const width = window.innerWidth;
-        const height = window.innerHeight;
+      return renderer
+    },
+    createCamera () {
+      const camera = new THREE.PerspectiveCamera(45, this.width / this.height);
+      camera.position.set(0, 0, 150);
+      camera.lookAt(new THREE.Vector3(0, 0, 0));
 
-        // レンダラーのサイズを調整する
-        renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.setSize(width, height);
+      return camera
+    },
+    createSprite (texture:any, scale:any, position:any, num:string, camera:any, renderer:any) {
+      const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+      const sprite = new THREE.Sprite(spriteMaterial);
+      sprite.scale.set(scale.x, scale.y, scale.z);
+      sprite.position.set(position.x, position.y, position.z);
 
-        // カメラのアスペクト比を正す
-        camera.aspect = width / height;
-        camera.updateProjectionMatrix();
-      },
-      async deleteMemo () {
-        console.log('-----', dict_memo)
-        // @ts-ignore
-        const mesh = dict_memo[String(this.num)]
-        scene.remove( mesh )
-        mesh?.material.dispose();
-        mesh?.geometry.dispose();
+      scene.add(sprite);
 
-        // @ts-ignore
-        delete dict_memo[String(this.num)]
+      // @ts-ignore
+      dict_memo[num] = sprite
 
-        console.log('-----', dict_memo)
-
-        const uid = this.$store.getters.getUserUid
-
-        await deleteDoc(doc(database, "memo", String(this.num)));
-      },
-      async addMemo () {
-        // @ts-ignore
-        if (dict_memo[String(this.num)]) {
-          await this.deleteMemo()
-        }
-
-        const uid = this.$store.getters.getUserUid
-
-        await setDoc(doc(database, "memo", String(this.num)), {
-        // await setDoc(doc(database, "memo", uid), {
-          // num: String(this.num),
-          four: this.four,
-          memo: this.memo
-        });
-
-        const renderer = this.createRenderer()
-        const camera = this.createCamera()
-
-        const memo = this.num + '. ' + this.memo
-        const createCanvasForTexture = this.createCanvasForTexture(500, 500, memo, 100)
-        
-        const canvasTexture = new THREE.CanvasTexture(
-          createCanvasForTexture
+      const controls = new DragControls( [sprite], camera, renderer.domElement );
+    },
+    createCanvasForTexture (canvasWidth:any, canvasHeight:any, text:any, fontSize:any) {
+      // 貼り付けるcanvasを作成。
+      const canvasForText = document.createElement('canvas');
+      const ctx = canvasForText.getContext('2d');
+      if (ctx) {
+        ctx.canvas.width = canvasWidth; // 小さいと文字がぼやける
+        ctx.canvas.height = canvasHeight; // 小さいと文字がぼやける 
+        // 透過率50%の青背景を描く
+        ctx.fillStyle = 'rgba(0, 0, 255, 0.5)';
+        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        //
+        ctx.fillStyle = 'black';
+        ctx.font = `${fontSize}px serif`;
+        ctx.fillText(
+          text,
+          // x方向の余白/2をx方向開始時の始点とすることで、横方向の中央揃えをしている。
+          (canvasWidth - ctx.measureText(text).width) / 2,
+          // y方向のcanvasの中央に文字の高さの半分を加えることで、縦方向の中央揃えをしている。
+          canvasHeight / 2 + ctx.measureText(text).actualBoundingBoxAscent / 2
         );
-
-        // @ts-ignore
-        const position = this.demo[this.four]
-        this.createSprite(canvasTexture, this.scale, position, String(this.num), camera, renderer)
-
-        tick()
-
-        function tick() {
-          const canvas = renderer.domElement;
-          camera.aspect = canvas.clientWidth / canvas.clientHeight;
-          camera.updateProjectionMatrix();
-
-          renderer.render(scene, camera);
-          requestAnimationFrame(tick);
-        }
-
-        // 初期化のために実行
-        this.onResize(renderer, camera);
-        // リサイズイベント発生時に実行
-        // @ts-ignore
-        window.addEventListener('resize', this.onResize(renderer, camera));
-
-        this.num++
-      },
+      }
+      return canvasForText;
     },
+    onResize (renderer:any, camera:any) {
+      // サイズを取得
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+
+      // レンダラーのサイズを調整する
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(width, height);
+
+      // カメラのアスペクト比を正す
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    },
+    async deleteMemo () {
+      // @ts-ignore
+      const mesh = dict_memo[String(this.num)]
+      scene.remove( mesh )
+      mesh?.material.dispose();
+      mesh?.geometry.dispose();
+
+      // @ts-ignore
+      delete dict_memo[String(this.num)]
+
+      const uid = this.$store.getters.getUserUid
+
+      // await deleteDoc(doc(database, "memo", String(this.num)));
+      await deleteDoc(doc(database, "memo", uid));
+    },
+    async addMemo () {
+      // @ts-ignore
+      if (dict_memo[String(this.num)]) {
+        await this.deleteMemo()
+      }
+
+      const uid = this.$store.getters.getUserUid
+
+      // await setDoc(doc(database, "memo", String(this.num)), {
+      await setDoc(doc(database, uid, uid), {
+        num: String(this.num),
+        which: this.which,
+        memo: this.memo
+      });
+
+      const renderer = this.createRenderer()
+      const camera = this.createCamera()
+
+      const memo = this.num + '. ' + this.memo
+      const createCanvasForTexture = this.createCanvasForTexture(500, 500, memo, 100)
+      
+      const canvasTexture = new THREE.CanvasTexture(
+        createCanvasForTexture
+      );
+
+      // @ts-ignore
+      const position = this.position_obj[this.which]
+      this.createSprite(canvasTexture, this.scale, position, String(this.num), camera, renderer)
+
+      tick()
+
+      function tick() {
+        const canvas = renderer.domElement;
+        camera.aspect = canvas.clientWidth / canvas.clientHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.render(scene, camera);
+        requestAnimationFrame(tick);
+      }
+
+      // 初期化のために実行
+      this.onResize(renderer, camera);
+      // リサイズイベント発生時に実行
+      // @ts-ignore
+      window.addEventListener('resize', this.onResize(renderer, camera));
+
+      this.num++
+    },
+  },
 })
 </script>
 
