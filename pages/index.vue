@@ -1,6 +1,11 @@
 <template>
   <div>
-    <BaseBackground />
+    <div v-if="!$store.getters.getLoggedIn">
+      <Auth />
+    </div>
+    <div v-else>
+      <BaseBackground />
+    </div>
   </div>
 </template>
 
@@ -11,11 +16,16 @@ interface DataType {
 }
 
 export default Vue.extend({
+  async asyncData ({ store }) {
+    try {
+      console.log('asyncData')
+      store.dispatch('onAuth')
+    } catch (err) {
+    }
+  },
   data ():DataType {
     return {
     } as DataType
-  },
-  methods: {
   },
 })
 </script>
