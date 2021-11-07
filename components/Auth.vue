@@ -27,11 +27,8 @@ import Vue from 'vue'
 
 export default Vue.extend({
   name: 'Auth',
-  mounted () {
-  },
   methods: {
     auth () {
-      console.log('login')
       this.$store.dispatch('login')
     },
   },

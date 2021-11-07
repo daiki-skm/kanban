@@ -18,9 +18,9 @@ interface DataType {
 export default Vue.extend({
   async asyncData ({ store }) {
     try {
-      console.log('asyncData')
       store.dispatch('onAuth')
     } catch (err) {
+      console.log('asyncData', err)
     }
   },
   data ():DataType {
