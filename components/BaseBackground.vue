@@ -134,13 +134,13 @@ export default Vue.extend({
   },
   async mounted () {
     const _this = this
-    // const uid = this.$store.getters.getUserUid
-    const querySnapshot = await getDocs(collection(database, "memo"));
+    const uid = this.$store.getters.getUserUid
+    const querySnapshot = await getDocs(collection(database, uid));
     querySnapshot?.forEach((doc) => {
       const renderer = _this.createRenderer()
       const camera = _this.createCamera()
 
-      const memo = doc.data().num + '. ' + doc.data().memo
+      const memo = doc.id + '. ' + doc.data().memo
       const createCanvasForTexture = _this.createCanvasForTexture(500, 500, memo, 100)
 
       const canvasTexture = new THREE.CanvasTexture(
@@ -150,7 +150,7 @@ export default Vue.extend({
       const which = doc.data().which
       // @ts-ignore
       const position = _this.position_obj[which]
-      _this.createSprite(canvasTexture, _this.scale, position, doc.data().num, camera, renderer)
+      _this.createSprite(canvasTexture, _this.scale, position, doc.id, camera, renderer)
 
       tick()
 
@@ -261,8 +261,7 @@ export default Vue.extend({
 
       const uid = this.$store.getters.getUserUid
 
-      // await deleteDoc(doc(database, "memo", String(this.num)));
-      await deleteDoc(doc(database, "memo", uid));
+      await deleteDoc(doc(database, uid, String(this.num)));
     },
     async addMemo () {
       // @ts-ignore
@@ -272,9 +271,7 @@ export default Vue.extend({
 
       const uid = this.$store.getters.getUserUid
 
-      // await setDoc(doc(database, "memo", String(this.num)), {
-      await setDoc(doc(database, uid, uid), {
-        num: String(this.num),
+      await setDoc(doc(database, uid, String(this.num)), {
         which: this.which,
         memo: this.memo
       });
