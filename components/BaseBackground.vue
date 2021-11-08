@@ -1,95 +1,77 @@
 <template>
   <div class="w-screen h-screen bg-white">
-    <div class="h-1/6 mt-10 mb-24 px-10 font-mono">
-      <p class="text-6xl text-gray-800 text-left mb-10">
+    <div class="my-10 px-10 font-mono">
+      <p class="text-6xl text-gray-800 text-left">
         kanban
       </p>
-      <div>
-        <!-- <div class="hidden sm:block" aria-hidden="true">
-          <div class="py-5">
-            <div class="border-t border-gray-200" />
-          </div>
-        </div> -->
-        <div class="mt-10 sm:mt-0">
-          <div class="md:grid md:grid-cols-3 md:gap-6">
-            <div class="mt-5 md:mt-0 md:col-span-2">
-              <div class="shadow overflow-hidden sm:rounded-md">
-                <div class="px-4 py-5 bg-white sm:p-6">
-                  <div class="grid grid-cols-6 gap-6">
-                    <div class="col-span-6 sm:col-span-1">
-                      <label
-                        for="first-name"
-                        class="block text-sm font-medium text-gray-700"
-                      >
-                        Number
-                      </label>
-                      <input
-                        type="text"
-                        v-model="num"
-                        name="first-name"
-                        ref="first-name"
-                        autocomplete="given-name"
-                        class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                      />
-                    </div>
-
-                    <div class="col-span-6 sm:col-span-3">
-                      <label for="country" class="block text-sm font-medium text-gray-700">Which</label>
-                      <select
-                        v-model="which"
-                        ref="country"
-                        name="country"
-                        autocomplete="country-name"
-                        class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      >
-                        <option>must</option>
-                        <option>value</option>
-                        <option>illusion</option>
-                        <option>unnecessary</option>
-                      </select>
-                    </div>
-
-                    <div class="col-span-6 sm:col-span-5">
-                      <label for="last-name" class="block text-sm font-medium text-gray-700">Memo</label>
-                      <input
-                        type="text"
-                        v-model="memo"
-                        name="last-name"
-                        ref="last-name"
-                        autocomplete="family-name"
-                        class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
-                  <button
-                    @click="addMemo"
-                    class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
-                    Add
-                  </button>
-                  <button
-                    @click="deleteMemo"
-                    class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
-                    Delete
-                  </button>
-                  <button
-                    @click="logout"
-                    class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
-                    Logout
-                  </button>
-                </div>
+    </div>
+    <!-- <div class="hidden sm:block" aria-hidden="true">
+      <div class="py-5">
+        <div class="border-t border-gray-200" />
+      </div>
+    </div> -->
+    <div class="mx-auto mb-10 w-3/4">
+      <div class="mt-5 md:mt-0 md:col-span-2">
+        <div class="shadow overflow-hidden rounded-md">
+          <div class="px-4 py-5 bg-white sm:p-6">
+            <div class="grid grid-cols-6 gap-6">
+              <div class="col-span-6 sm:col-span-1">
+                <label class="block text-sm font-medium text-gray-700">
+                  Number
+                </label>
+                <input
+                  type="number"
+                  v-model="num"
+                  class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                />
+              </div>
+              <div class="col-span-6 sm:col-span-3">
+                <label class="block text-sm font-medium text-gray-700">Which</label>
+                <select
+                  v-model="which"
+                  class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                >
+                  <option>must</option>
+                  <option>value</option>
+                  <option>illusion</option>
+                  <option>unnecessary</option>
+                </select>
+              </div>
+              <div class="col-span-6">
+                <label class="block text-sm font-medium text-gray-700">Memo</label>
+                <input
+                  type="text"
+                  v-model="memo"
+                  class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                />
               </div>
             </div>
+          </div>
+          <div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
+            <button
+              @click="addMemo"
+              class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Add
+            </button>
+            <button
+              @click="deleteMemo"
+              class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Delete
+            </button>
+            <button
+              @click="logout"
+              class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Logout
+            </button>
           </div>
         </div>
       </div>
     </div>
     <canvas class="artwork__canvas" ref="canvas"></canvas>
-    <div class="kanban mx-auto w-1 h-1 w-3/4 h-3/4 rounded-3xl shadow-2xl grid gap-0 grid-cols-2">
+    <div class="mx-auto w-1 h-1 w-3/4 h-3/4 rounded-3xl shadow-2xl grid gap-0 grid-cols-2">
       <div class="bg-red-100 rounded-tl-3xl">MUST</div>
       <div class="bg-yellow-100 rounded-tr-3xl">価値</div>
       <div class="bg-green-100 rounded-bl-3xl">錯覚</div>
