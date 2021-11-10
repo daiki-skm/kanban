@@ -5,31 +5,26 @@
         kanban
       </p>
     </div>
-    <!-- <div class="hidden sm:block" aria-hidden="true">
-      <div class="py-5">
-        <div class="border-t border-gray-200" />
-      </div>
-    </div> -->
     <div class="mx-auto mb-10 w-3/4">
       <div class="mt-5 md:mt-0 md:col-span-2">
         <div class="shadow overflow-hidden rounded-md">
           <div class="px-4 py-5 bg-white sm:p-6">
             <div class="grid grid-cols-6 gap-6">
               <div class="col-span-6 sm:col-span-1">
-                <label class="block text-sm font-medium text-gray-700">
+                <label class="block text-lg font-medium text-gray-700">
                   Number
                 </label>
                 <input
                   type="number"
                   v-model="num"
-                  class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                  class="mt-1 block w-full h-8 shadow text-base border-gray-300 rounded-md"
                 />
               </div>
               <div class="col-span-6 sm:col-span-3">
-                <label class="block text-sm font-medium text-gray-700">Which</label>
+                <label class="block text-lg font-medium text-gray-700">Which</label>
                 <select
                   v-model="which"
-                  class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-base"
                 >
                   <option>must</option>
                   <option>value</option>
@@ -38,11 +33,11 @@
                 </select>
               </div>
               <div class="col-span-6">
-                <label class="block text-sm font-medium text-gray-700">Memo</label>
+                <label class="block text-lg font-medium text-gray-700">Memo</label>
                 <input
                   type="text"
                   v-model="memo"
-                  class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                  class="mt-1 block w-full h-8 shadow text-base border-gray-300 rounded-md"
                 />
               </div>
             </div>
@@ -117,7 +112,7 @@ export default Vue.extend({
       },
       position_obj: {
         "must": {
-          x: -50,
+          x: -80,
           y: 60,
           z: -40
         },
@@ -127,13 +122,13 @@ export default Vue.extend({
           z: -40
         },
         "illusion": {
-          x: -50,
-          y: 0,
+          x: -80,
+          y: -10,
           z: -40
         },
         "unnecessary": {
           x: 10,
-          y: 0,
+          y: -10,
           z: -40
         }
       }
