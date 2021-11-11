@@ -1,4 +1,4 @@
-import { GoogleAuthProvider, getAuth, signInWithPopup, setPersistence, browserSessionPersistence, onAuthStateChanged, signOut } from "firebase/auth"
+import { GoogleAuthProvider, getAuth, signInWithPopup, setPersistence, browserSessionPersistence, onAuthStateChanged, signOut, signInAnonymously } from "firebase/auth"
 
 export const state = () => ({
   loggedIn: false,
@@ -51,6 +51,34 @@ export const actions = {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.log('keeping state error: ', errorCode, errorMessage)
+      })
+  },
+  async loginGuest({ commit }) {
+    console.log('guest login action')
+    const auth = getAuth()
+
+    await signInAnonymously(auth)
+      .then((result) => {
+        const user = result.user
+        commit('setUserUid', user.uid)
+        commit('setUserName', user.displayName)
+
+        console.log('guest login success')
+      }).catch((error) => {
+        const errorCode = error.code
+        const errorMessage = error.message
+
+        console.log('guest login error: ', errorCode, errorMessage)
+      })
+
+    await setPersistence(auth, browserSessionPersistence)
+      .then(() => {
+        console.log('guest keeping state')
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log('guest keeping state error: ', errorCode, errorMessage)
       })
   },
   logout ({ commit }) {

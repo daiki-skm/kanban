@@ -67,10 +67,10 @@
     </div>
     <canvas class="artwork__canvas" ref="canvas"></canvas>
     <div class="mx-auto w-1 h-1 w-3/4 h-3/4 rounded-3xl shadow-2xl grid gap-0 grid-cols-2">
-      <div class="bg-red-100 rounded-tl-3xl">MUST</div>
-      <div class="bg-yellow-100 rounded-tr-3xl">価値</div>
-      <div class="bg-green-100 rounded-bl-3xl">錯覚</div>
-      <div class="bg-blue-100 rounded-br-3xl">ムダ</div>
+      <div class="bg-indigo-600 bg-opacity-25 rounded-tl-3xl text-xl pl-5 pt-4">MUST</div>
+      <div class="bg-indigo-100 rounded-tr-3xl text-xl pl-5 pt-4">価値</div>
+      <div class="bg-indigo-100 rounded-bl-3xl text-xl pl-5 pt-4">錯覚</div>
+      <div class="bg-indigo-600 bg-opacity-25 rounded-br-3xl text-xl pl-5 pt-4">ムダ</div>
     </div>
   </div>
 </template>
@@ -79,7 +79,7 @@
 import Vue from 'vue'
 import database from '@/plugin/firebase'
 import { collection, doc, setDoc, deleteDoc, getDocs } from "firebase/firestore"
-import * as THREE from "three";
+import * as THREE from "three"
 import { DragControls } from "three/examples/jsm/controls/DragControls"
 
 interface DataType {
@@ -90,11 +90,10 @@ interface DataType {
   height: number
   scale: Object
   position_obj: Object
+  dict_memo: Object
 }
 
-let dict_memo = {}
-
-const scene = new THREE.Scene();
+const scene = new THREE.Scene()
 
 export default Vue.extend({
   name: 'BaseBackground',
@@ -131,13 +130,14 @@ export default Vue.extend({
           y: -10,
           z: -40
         }
-      }
+      },
+      dict_memo: {}
     } as DataType
   },
-  async mounted () {
+  async mounted() {
     const _this = this
     const uid = this.$store.getters.getUserUid
-    const querySnapshot = await getDocs(collection(database, uid));
+    const querySnapshot = await getDocs(collection(database, uid))
     querySnapshot?.forEach((doc) => {
       const renderer = _this.createRenderer()
       const camera = _this.createCamera()
@@ -157,20 +157,18 @@ export default Vue.extend({
       tick()
 
       function tick() {
-        const canvas = renderer.domElement;
-        camera.aspect = canvas.clientWidth / canvas.clientHeight;
-        camera.updateProjectionMatrix();
+        const canvas = renderer.domElement
+        camera.aspect = canvas.clientWidth / canvas.clientHeight
+        camera.updateProjectionMatrix()
 
-        renderer.render(scene, camera);
-        requestAnimationFrame(tick);
+        renderer.render(scene, camera)
+        requestAnimationFrame(tick)
       }
 
-      // 初期化のために実行
-      _this.onResize(renderer, camera);
-      // リサイズイベント発生時に実行
+      _this.onResize(renderer, camera)
       // @ts-ignore
-      window.addEventListener('resize', _this.onResize(renderer, camera));
-    });
+      window.addEventListener('resize', _this.onResize(renderer, camera))
+    })
   },
   watch: {
     '$window.width'() {
@@ -181,96 +179,86 @@ export default Vue.extend({
     },
   },
   methods: {
-    demo() {
-      console.log('demo')
-    },
-    logout () {
+    logout() {
       this.$store.dispatch('logout')
     },
-    createRenderer () {
+    createRenderer() {
       const renderer = new THREE.WebGLRenderer({
         // @ts-ignore
         canvas: this.$refs.canvas,
         alpha: true,
-      });
-      renderer.setPixelRatio(window.devicePixelRatio);
-      renderer.setSize(this.width, this.height);
+      })
+      renderer.setPixelRatio(window.devicePixelRatio)
+      renderer.setSize(this.width, this.height)
 
       return renderer
     },
-    createCamera () {
-      const camera = new THREE.PerspectiveCamera(45, this.width / this.height);
-      camera.position.set(0, 0, 150);
-      camera.lookAt(new THREE.Vector3(0, 0, 0));
+    createCamera() {
+      const camera = new THREE.PerspectiveCamera(45, this.width / this.height)
+      camera.position.set(0, 0, 150)
+      camera.lookAt(new THREE.Vector3(0, 0, 0))
 
       return camera
     },
-    createSprite (texture:any, scale:any, position:any, num:string, camera:any, renderer:any) {
-      const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
-      const sprite = new THREE.Sprite(spriteMaterial);
-      sprite.scale.set(scale.x, scale.y, scale.z);
-      sprite.position.set(position.x, position.y, position.z);
+    createSprite(texture:any, scale:any, position:any, num:string, camera:any, renderer:any) {
+      const spriteMaterial = new THREE.SpriteMaterial({ map: texture })
+      const sprite = new THREE.Sprite(spriteMaterial)
+      sprite.scale.set(scale.x, scale.y, scale.z)
+      sprite.position.set(position.x, position.y, position.z)
 
-      scene.add(sprite);
+      scene.add(sprite)
 
       // @ts-ignore
-      dict_memo[num] = sprite
+      this.dict_memo[num] = sprite
 
-      const controls = new DragControls( [sprite], camera, renderer.domElement );
+      const controls = new DragControls( [sprite], camera, renderer.domElement )
     },
-    createCanvasForTexture (canvasWidth:any, canvasHeight:any, text:any, fontSize:any) {
-      // 貼り付けるcanvasを作成。
-      const canvasForText = document.createElement('canvas');
-      const ctx = canvasForText.getContext('2d');
+    createCanvasForTexture(canvasWidth:any, canvasHeight:any, text:any, fontSize:any) {
+      const canvasForText = document.createElement('canvas')
+      const ctx = canvasForText.getContext('2d')
       if (ctx) {
-        ctx.canvas.width = canvasWidth; // 小さいと文字がぼやける
-        ctx.canvas.height = canvasHeight; // 小さいと文字がぼやける 
-        // 透過率50%の青背景を描く
-        ctx.fillStyle = 'rgba(0, 0, 255, 0.5)';
-        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        //
+        ctx.canvas.width = canvasWidth
+        ctx.canvas.height = canvasHeight
+        ctx.fillStyle = 'rgba(0, 0, 255, 0.5)'
+        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+
         ctx.fillStyle = 'black';
         ctx.font = `${fontSize}px serif`;
         ctx.fillText(
           text,
-          // x方向の余白/2をx方向開始時の始点とすることで、横方向の中央揃えをしている。
           (canvasWidth - ctx.measureText(text).width) / 2,
-          // y方向のcanvasの中央に文字の高さの半分を加えることで、縦方向の中央揃えをしている。
           canvasHeight / 2 + ctx.measureText(text).actualBoundingBoxAscent / 2
-        );
+        )
       }
       return canvasForText;
     },
-    onResize (renderer:any, camera:any) {
-      // サイズを取得
-      const width = window.innerWidth;
-      const height = window.innerHeight;
+    onResize(renderer:any, camera:any) {
+      const width = window.innerWidth
+      const height = window.innerHeight
 
-      // レンダラーのサイズを調整する
-      renderer.setPixelRatio(window.devicePixelRatio);
-      renderer.setSize(width, height);
+      renderer.setPixelRatio(window.devicePixelRatio)
+      renderer.setSize(width, height)
 
-      // カメラのアスペクト比を正す
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
+      camera.aspect = width / height
+      camera.updateProjectionMatrix()
     },
-    async deleteMemo () {
+    async deleteMemo() {
       // @ts-ignore
-      const mesh = dict_memo[String(this.num)]
+      const mesh = this.dict_memo[String(this.num)]
       scene.remove( mesh )
-      mesh?.material.dispose();
-      mesh?.geometry.dispose();
+      mesh?.material.dispose()
+      mesh?.geometry.dispose()
 
       // @ts-ignore
-      delete dict_memo[String(this.num)]
+      delete this.dict_memo[String(this.num)]
 
       const uid = this.$store.getters.getUserUid
 
-      await deleteDoc(doc(database, uid, String(this.num)));
+      await deleteDoc(doc(database, uid, String(this.num)))
     },
-    async addMemo () {
+    async addMemo() {
       // @ts-ignore
-      if (dict_memo[String(this.num)]) {
+      if (this.dict_memo[String(this.num)]) {
         await this.deleteMemo()
       }
 
@@ -279,7 +267,7 @@ export default Vue.extend({
       await setDoc(doc(database, uid, String(this.num)), {
         which: this.which,
         memo: this.memo
-      });
+      })
 
       const renderer = this.createRenderer()
       const camera = this.createCamera()
@@ -289,7 +277,7 @@ export default Vue.extend({
       
       const canvasTexture = new THREE.CanvasTexture(
         createCanvasForTexture
-      );
+      )
 
       // @ts-ignore
       const position = this.position_obj[this.which]
@@ -298,19 +286,17 @@ export default Vue.extend({
       tick()
 
       function tick() {
-        const canvas = renderer.domElement;
-        camera.aspect = canvas.clientWidth / canvas.clientHeight;
-        camera.updateProjectionMatrix();
+        const canvas = renderer.domElement
+        camera.aspect = canvas.clientWidth / canvas.clientHeight
+        camera.updateProjectionMatrix()
 
-        renderer.render(scene, camera);
-        requestAnimationFrame(tick);
+        renderer.render(scene, camera)
+        requestAnimationFrame(tick)
       }
 
-      // 初期化のために実行
-      this.onResize(renderer, camera);
-      // リサイズイベント発生時に実行
+      this.onResize(renderer, camera)
       // @ts-ignore
-      window.addEventListener('resize', this.onResize(renderer, camera));
+      window.addEventListener('resize', this.onResize(renderer, camera))
 
       this.num++
     },

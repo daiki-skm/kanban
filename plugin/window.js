@@ -13,7 +13,6 @@ Vue.use({
         $window.width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
       }
       global.addEventListener('resize', onResize)
-      // 一度だけスクロールハンドラとリサイズハンドラを直接呼んで初期値をセット
       onResize()
     }
 
