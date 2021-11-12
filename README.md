@@ -2,7 +2,7 @@
 Check it out!   
 https://kanban-aeff4.web.app/
 
-If you want to more know, please refer to [zenn article](https://zenn.dev/daiki_skm/articles/9f890ae15403f6)!
+If you want to more know, please refer to [Zenn](https://zenn.dev/daiki_skm/articles/9f890ae15403f6)!
 
 ## Build Setup
 
