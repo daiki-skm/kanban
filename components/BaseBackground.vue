@@ -111,23 +111,23 @@ export default Vue.extend({
       },
       position_obj: {
         "must": {
-          x: -80,
-          y: 60,
+          x: -20,
+          y: 50,
           z: -40
         },
         "value": {
           x: 10,
-          y: 60,
+          y: 50,
           z: -40
         },
         "illusion": {
-          x: -80,
-          y: -10,
+          x: -20,
+          y: -20,
           z: -40
         },
         "unnecessary": {
           x: 10,
-          y: -10,
+          y: -20,
           z: -40
         }
       },
@@ -147,7 +147,7 @@ export default Vue.extend({
 
       const canvasTexture = new THREE.CanvasTexture(
         createCanvasForTexture
-      );
+      )
 
       const which = doc.data().which
       // @ts-ignore
@@ -230,7 +230,7 @@ export default Vue.extend({
           canvasHeight / 2 + ctx.measureText(text).actualBoundingBoxAscent / 2
         )
       }
-      return canvasForText;
+      return canvasForText
     },
     onResize(renderer:any, camera:any) {
       const width = window.innerWidth
